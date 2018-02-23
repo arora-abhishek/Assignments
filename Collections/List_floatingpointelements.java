@@ -5,7 +5,7 @@ import java.util.List;
 public class List_floatingpointelements {
     public static void main(String[] args) {
 
-        float sum=0.0f;
+        double sum=0.0;
 
         List<Float> li=new ArrayList<Float>();
         li.add(5.2f);
