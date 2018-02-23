@@ -1,140 +1,211 @@
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Stack;
+import java.util.NoSuchElementException;
+
 
 public class Stack_Implementation {
 
-    private static int maxSize;
-    private static int counter=-1;
-    protected static ArrayList<Integer> special_stack;
-    private static int min_element=0;
-
-   protected static Stack min_stack=new Stack();
-
+    private  int maxSize;
+    private  int top;
+    private  int len;
+    protected  int[] special_stack;
+    protected  List<Integer> min;
+    private  int min_element;
 
 
     public Stack_Implementation(int maxsize) {
 
-        this.maxSize=maxsize;
-        special_stack=new ArrayList<Integer>(maxSize);
+        this.maxSize = maxsize;
+        special_stack = new int[maxSize];
+        min = new ArrayList<>();
+        min_element=0;
+        top=-1;
+        len=0;
     }
 
 
-    protected  static boolean chkEmpty(ArrayList st)
-    {
-        if(st.isEmpty())
+    protected boolean isEmpty() {
+        if (top == -1)
             return true;
         else
             return false;
     }
 
 
-    protected static  void push(ArrayList st, int a) {
-        if (chkFull())
+    protected  boolean isFull() {
+        if (top >= maxSize)
+            return true;
+        else
+            return false;
+    }
+
+
+    protected int peek() {
+        if(isEmpty())
+            throw new NoSuchElementException("Underflow Exception");
+        return special_stack[top];
+
+    }
+
+
+    protected void push(int a) {
+
+        if (isFull()) {
             System.out.println("Overflow...");
+            throw new ArrayIndexOutOfBoundsException();
+        }
+
         else {
 
-            if (chkEmpty(st))
+            if (isEmpty())
                 min_element = a;
 
             else {
-                if (min_element > a)
+
+                if (min_element >= a)
                     min_element = a;
             }
 
-            ++counter;
-            st.add(a);
-            min_stack.push(min_element);
+            ++top;
+            special_stack[top] = a;
+            min.add(min_element);
             System.out.println("Pushed item -> " + a);
+            ++len;
         }
     }
 
-    protected static  void pop(ArrayList st)
-    {
-        if(chkEmpty(st))
+    protected int pop() {
+        if (isEmpty()) {
             System.out.println("Cannot pop....stack is already empty");
-        else
-        {
-            int a= (int) st.remove(counter);
-            System.out.println("Removed item -> "+a);
-            if(a==min_element) {
-                min_stack.pop();
-                min_element=(int)min_stack.peek();
+            throw new NoSuchElementException("Underflow Exception");
+        }
+
+        else {
+            int rem = special_stack[top];
+            --top;
+
+            if (rem == min_element) {
+                min.remove(min.size() - 1);
+                min_element = (int) min.get(min.size());
+                --len;
 
             }
 
-            --counter;
+            return rem;
         }
 
     }
 
-    protected static  void display_stack(ArrayList st)
-    {
-        Iterator ir=st.iterator();
-        while(ir.hasNext())
-            System.out.print((int)(ir.next())+" ");
-        System.out.println("");
+    protected void display() {
+        if (len == 0)
+        {
+            System.out.print("Empty\n");
+
+            return ;
+
+        }
+        for (int i = top; i >= 0; i--)
+            System.out.print(special_stack[i] + " ");
+        System.out.println();
     }
 
 
+    protected int getMin() {
 
-    protected  static boolean chkFull()
-    {
-        if(counter>=maxSize)
-            return true;
-        else
-            return false;
+
+        return min_element;
     }
 
 
-    protected static  void peek(ArrayList st)
-    {
-        int a=(int)st.get(counter);
-        System.out.println("Top element : "+a);
-    }
+}
 
-    protected static void getMin()
-    {
+class SpecialStack {
 
+    public static void main(String[] args) throws IOException {
 
-        System.out.println("Minimum Element : "+min_element);
-    }
+        Stack_Implementation obj1 = new Stack_Implementation(10);
+        System.out.println("Stack Operations");
+        System.out.println(" Press 1. for push, 2. for pop, 3. for display, 4. for peek, 5. for minimum element");
 
 
+        BufferedReader br = new BufferedReader((new InputStreamReader(System.in)));
+        int option = Integer.parseInt(br.readLine());
+
+
+        do {
+            switch (option) {
+                case 1:
+                    try {
+
+                        System.out.println("Enter any number");
+                        int num = Integer.parseInt(br.readLine());
+                        obj1.push(num);
+                        break;
+                    }
+                    catch (Exception e)
+
+                    {
+
+                        System.out.println("Error : " + e.getMessage());
+
+                    }
+
+
+                case 2:
+                    try {
+
+                        int rem = obj1.pop();
+                        System.out.println("Element removed -> " + rem);
+                        break;
+                    }
+                    catch (Exception e)
+
+                    {
+
+                        System.out.println("Error : " + e.getMessage());
+
+                    }
+
+                case 3:
+                    obj1.display();
+                    break;
+
+                case 4:
+                    try{
+                        int peek = obj1.peek();
+                        System.out.println("Topmost element -> " + peek);
+                        break;
+                    }
+                    catch (Exception e)
+
+                    {
+
+                        System.out.println("Error : " + e.getMessage());
+
+                    }
+
+                case 5:
+                    int min = obj1.getMin();
+                    System.out.println("Minimum element -> " + min);
+                    break;
+
+                default:
+                    System.out.println("Wrong choice");
+
+            }
+
+        System.out.println("Stack Operations");
+        System.out.println(" Press 1. for push, 2. for pop, 3. for display, 4. for peek, 5. for minimum element");
+
+        option = Integer.parseInt(br.readLine());
 
 
 
-    public static void main(String[] args) {
-
-        Stack_Implementation obj1=new Stack_Implementation(10);
-
-
-
-        push(special_stack,22);
-        push(special_stack,10);
-        push(special_stack,12);
-        push(special_stack,11);
-        push(special_stack,22);
-        push(special_stack,19);
-
-
-        push(special_stack,32);
-        push(special_stack,14);
-        push(special_stack,7);
-
-        display_stack(special_stack);
-        getMin();
-
-        pop(special_stack);
-        pop(special_stack);
-
-        display_stack(special_stack);
-        peek(special_stack);
-
-       chkFull();
-        getMin();
-
+        }while (option >= 1 && option <= 5) ;
     }
 
 }
+
